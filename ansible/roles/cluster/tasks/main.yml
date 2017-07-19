@@ -1,0 +1,41 @@
+#
+# tasks to create the CockroachDB cluster on GCD
+#
+
+- name: create the custom boot disks
+  gce_pd:
+      name: "cockroachdb-cluster-bootdisk-{{ item }}"
+      image: "{{ image }}"
+      size_gb: "{{ bootdisk_size }}"
+      # half of the disks are created in an europe zone, the other half in a us zone
+      zone: "{{ [ item | int % 2] | map('extract', [zones.europe, zones.us]) | list | join('') }}"
+  with_sequence: count="{{ num_cluster_nodes }}" format="%02d"
+
+- name: create the virtual private network
+  gce_net:
+    name: "{{ vpc_name }}"
+    mode: custom
+    subnet_name: "{{ item.subnet_name }}"
+    subnet_region: "{{ item.subnet_region }}"
+    ipv4_range: "{{ item.ipv4_range }}"
+    state: present
+  with_items:
+    - { subnet_name: "{{ subnets.name.europe }}", subnet_region: "{{ subnets.region.europe }}", ipv4_range: "{{ subnets.ipv4.europe }}" }
+    - { subnet_name: "{{ subnets.name.us }}", subnet_region: "{{ subnets.region.us }}", ipv4_range: "{{ subnets.ipv4.us }}"}
+
+- name: create the cluster nodes
+  gce:
+    instance_names: "cockroachdb-cluster-node-{{ item }}"
+    machine_type: "{{ machine_type }}"
+    image: "{{ image }}"
+    disks:
+      - name: "cockroachdb-cluster-bootdisk-{{ item }}"
+        mode: READ_WRITE
+    disk_auto_delete: true
+    state: present
+    # half of the nodes are created in an europe zone, the other half in a us zone. They are assigned
+    # to the europe or US subnetwork respectively.
+    zone: "{{ [item | int % 2] | map('extract', [zones.europe, zones.us]) | list | join('')}}"
+    network: "{{ vpc_name }}"
+    subnetwork: "{{ [item | int % 2] | map('extract', [subnets.name.europe, subnets.name.us]) | list | join('') }}"
+  with_sequence: count="{{ num_cluster_nodes }}" format="%02d"

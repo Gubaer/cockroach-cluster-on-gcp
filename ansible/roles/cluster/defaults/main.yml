@@ -1,0 +1,30 @@
+# the number of cluster nodes in the cluster
+num_cluster_nodes: 4
+
+# the type of machine to be created
+machine_type: n1-standard-1
+
+# the image (ubuntu 16.04) 
+image: ubuntu-1604-xenial-v20170516
+
+bootdisk_size: 40
+
+# the name of the virtual private network
+vpc_name: cockroachdb-cluster-vpc
+
+# the zones where disks and nodes are created
+zones:
+  europe: europe-west1-d
+  us: us-east1-b
+
+# the subnet regions for which subnets are created in the VPC
+subnets:
+  name: 
+    europe: "{{ vpc_name }}-europe-west"
+    us: "{{ vpc_name }}-us-east"
+  region:
+    europe: europe-west1
+    us: us-east1
+  ipv4:
+    europe: "10.132.0.0/20"
+    us: "10.142.0.0/20"

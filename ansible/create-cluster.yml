@@ -1,0 +1,8 @@
+#
+# creates the CockroachDB cluster
+#
+- hosts: localhost
+  gather_facts: false
+
+  roles:
+    - cluster
