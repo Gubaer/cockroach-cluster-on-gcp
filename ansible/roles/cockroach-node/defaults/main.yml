@@ -1,4 +1,5 @@
 # the filename and download url of the cockroachdb distribution
 cockroach_distribution:
   filename: cockroach-v1.0.3.linux-amd64.tgz
-  url: "https://binaries.cockroachdb.com/{{ cockroach_distribution.filename }}"
+  url: "https://binaries.cockroachdb.com/cockroach-v1.0.3.linux-amd64.tgz"
+  
