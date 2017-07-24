@@ -1,0 +1,5 @@
+#
+# tasks for a node running ubuntu
+#
+- name: update and upgrade the ubuntu distribution
+  apt: update_cache=true upgrade=dist
