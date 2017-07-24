@@ -32,6 +32,7 @@
       - name: "cockroachdb-cluster-bootdisk-{{ item }}"
         mode: READ_WRITE
     disk_auto_delete: true
+    tags: cockroachdb-cluster-node
     state: present
     # half of the nodes are created in an europe zone, the other half in a us zone. They are assigned
     # to the europe or US subnetwork respectively.
