@@ -23,6 +23,14 @@
     - { subnet_name: "{{ subnets.name.europe }}", subnet_region: "{{ subnets.region.europe }}", ipv4_range: "{{ subnets.ipv4.europe }}" }
     - { subnet_name: "{{ subnets.name.us }}", subnet_region: "{{ subnets.region.us }}", ipv4_range: "{{ subnets.ipv4.us }}"}
 
+- name: allow ssh ingress into every node in the cluster
+  gce_net:
+    name: "{{ vpc_name }}"
+    fwname: "allow-ssh-ingress"
+    allowed: tcp:22
+    src_range: ["0.0.0.0/0"]  # from everywhere
+    state: present
+
 - name: create the cluster nodes
   gce:
     instance_names: "cockroachdb-cluster-node-{{ item }}"
