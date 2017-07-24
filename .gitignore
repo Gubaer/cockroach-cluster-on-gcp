@@ -1,5 +1,0 @@
-*.credentials.json
-secrets.py
-*.pyc
-gce_env.local
-*.retry
