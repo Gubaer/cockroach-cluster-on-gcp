@@ -3,3 +3,4 @@
 #
 - name: update and upgrade the ubuntu distribution
   apt: update_cache=true upgrade=dist
+  become: true
