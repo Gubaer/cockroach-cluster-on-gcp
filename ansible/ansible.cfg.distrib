@@ -1,0 +1,13 @@
+[defaults]
+# the remote user. Will be used by ansible to ssh into 
+# remote nodes and run ansible tasks there 
+remote_user = 
+
+# the full path to the private key of the remote_user
+# This file is usually in $HOME/.ssh/private_key_of_remote_user
+private_key_file = /full/path/to/private_key_of_remote_user
+
+# disable host checking. If false, ansible will not promt you to
+# confirm the fingerprint of a remote host it connects to with
+# ssh.
+host_key_checking=false
