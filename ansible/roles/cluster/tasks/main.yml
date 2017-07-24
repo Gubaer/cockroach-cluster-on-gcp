@@ -1,16 +1,6 @@
 #
 # tasks to create the CockroachDB cluster on GCD
 #
-
-- name: create the custom boot disks
-  gce_pd:
-      name: "cockroachdb-cluster-bootdisk-{{ item }}"
-      image: "{{ image }}"
-      size_gb: "{{ bootdisk_size }}"
-      # half of the disks are created in an europe zone, the other half in a us zone
-      zone: "{{ [ item | int % 2] | map('extract', [zones.europe, zones.us]) | list | join('') }}"
-  with_sequence: count="{{ num_cluster_nodes }}" format="%02d"
-
 - name: create the virtual private network
   gce_net:
     name: "{{ vpc_name }}"
@@ -30,6 +20,15 @@
     allowed: tcp:22
     src_range: ["0.0.0.0/0"]  # from everywhere
     state: present
+
+- name: create the custom boot disks
+  gce_pd:
+      name: "cockroachdb-cluster-bootdisk-{{ item }}"
+      image: "{{ image }}"
+      size_gb: "{{ bootdisk_size }}"
+      # half of the disks are created in an europe zone, the other half in a us zone
+      zone: "{{ [ item | int % 2] | map('extract', [zones.europe, zones.us]) | list | join('') }}"
+  with_sequence: count="{{ num_cluster_nodes }}" format="%02d"
 
 - name: create the cluster nodes
   gce:
