@@ -8,18 +8,22 @@
 
 - name: unarchive it 
   unarchive:
+    remote_src: true
     src: "/tmp/{{ cockroach_distribution.filename }}"
     dest: /usr/local
+  become: true
 
 - name: create a symlink for the coachroach distribution
   file:
     src: "/usr/local/{{ (cockroach_distribution.filename | splitext)[0] }}"
     dest: /usr/local/cockroach
     state: link
+  become: true
 
 - name: create a symlink to the coachroach binary
   file:
     src: /usr/local/cockroach/cockroach
     dest: /usr/local/bin/cockroach
     state: link
+  become: true
 
