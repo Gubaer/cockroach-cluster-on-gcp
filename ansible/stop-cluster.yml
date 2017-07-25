@@ -1,0 +1,19 @@
+
+# 
+# play to stop the cockroachdb software
+# TODO: stop cockroachdb
+- hosts: "tag_cockroachdb-cluster-node"
+  gather_facts: false
+
+
+#
+# play to stop the cluster nodes
+#
+- hosts: localhost
+  gather_facts: false
+
+  vars:
+    num_cluster_nodes: 2
+
+  roles:
+    - {role: cluster, action: "stop"} 

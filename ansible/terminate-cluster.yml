@@ -1,0 +1,11 @@
+#
+# play to terminate the cluster
+#
+- hosts: localhost
+  gather_facts: false
+
+  vars:
+    num_cluster_nodes: 2
+
+  roles:
+    - {role: cluster, action: "terminate"} 

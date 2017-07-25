@@ -9,7 +9,7 @@
     num_cluster_nodes: 2
 
   roles:
-    - {role: cluster, action: "create"}
+    - {role: cluster, action: "start"}
 
   post_tasks:
     - shell: ./gce.py --refresh-cache
@@ -17,19 +17,8 @@
 
 # 
 # play to provision the cluster nodes
-#
+# TODO: start cockroachdb
 - hosts: "tag_cockroachdb-cluster-node"
   gather_facts: false
 
-  pre_tasks:
-    - name: wait for SSH to come up
-      wait_for: 
-        delay: 1 
-        host: "{{ ansible_ssh_host }}" 
-        port: 22 
-        state: started 
-        timeout: 360
-
-  roles:
-    - ubuntu-node
-    - cockroach-node
+ 
