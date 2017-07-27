@@ -1,6 +1,5 @@
 #
-# play to create the cluster including the network, the disks,
-# and the compute engine nodes
+# play to start the cluster
 #
 - hosts: localhost
   gather_facts: false
@@ -20,5 +19,6 @@
 # TODO: start cockroachdb
 - hosts: "tag_cockroachdb-cluster-node"
   gather_facts: false
+
 
  
