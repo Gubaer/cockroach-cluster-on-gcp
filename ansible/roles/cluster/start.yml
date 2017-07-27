@@ -1,3 +1,6 @@
+#
+# tasks to start the cluster nodes
+#
 - name: start the cluster nodes
   gce:
     instance_names: "cockroachdb-cluster-node-{{ item }}"
