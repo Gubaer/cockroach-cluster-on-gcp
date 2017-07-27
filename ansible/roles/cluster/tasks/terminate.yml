@@ -21,6 +21,9 @@
     - { subnet_name: "{{ subnets.name.europe }}", subnet_region: "{{ subnets.region.europe }}", ipv4_range: "{{ subnets.ipv4.europe }}" }
     - { subnet_name: "{{ subnets.name.us }}", subnet_region: "{{ subnets.region.us }}", ipv4_range: "{{ subnets.ipv4.us }}"}
 
+- name: pause a couple of seconds 
+  pause: seconds=10
+
 - name: terminate the virtual private network
   gce_net:
     name: "{{ vpc_name }}"
