@@ -2,4 +2,7 @@
 cockroach_distribution:
   filename: cockroach-v1.0.3.linux-amd64.tgz
   url: "https://binaries.cockroachdb.com/cockroach-v1.0.3.linux-amd64.tgz"
+
+cockroach_node:
+  datadir: /var/data/cockroachdb
   

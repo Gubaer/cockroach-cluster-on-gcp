@@ -27,3 +27,9 @@
     state: link
   become: true
 
+- name: create the data dir for cockroach db data
+  file:
+    path: "{{ cockroach_node.datadir }}"
+    state: directory
+    mode: 0755
+  become: true
