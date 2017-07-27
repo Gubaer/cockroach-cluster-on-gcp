@@ -1,11 +1,15 @@
 
 # 
 # play to stop the cockroachdb software
-# TODO: stop cockroachdb
 - hosts: "tag_cockroachdb-cluster-node"
   gather_facts: false
 
-
+  tasks:
+    - name: stop cockroach
+      systemd:
+        name: cockroach
+        state: stopped
+      become: true
 #
 # play to stop the cluster nodes
 #
