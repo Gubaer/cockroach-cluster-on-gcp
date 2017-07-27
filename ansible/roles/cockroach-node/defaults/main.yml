@@ -5,4 +5,4 @@ cockroach_distribution:
 
 cockroach_node:
   datadir: /var/data/cockroachdb
-  
+  logdir: /var/log/cockroachdb

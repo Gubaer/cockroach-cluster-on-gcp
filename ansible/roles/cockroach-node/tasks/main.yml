@@ -27,9 +27,25 @@
     state: link
   become: true
 
-- name: create the data dir for cockroach db data
+- name: create the data and log directories
   file:
-    path: "{{ cockroach_node.datadir }}"
+    path: "{{ cockroach_node.logdir }}"
     state: directory
     mode: 0755
   become: true
+  with_items:
+    - "{{ cockroach_node.datadir }}"
+    - "{{ cockroach_node.logdir }}"
+
+- name: install systemd service file for cockroach service
+  template:
+    src: cockroach.service.j2
+    dest: /etc/systemd/system/cockroach.service
+  become: true
+
+- name: enable systemd service for cockroach
+  systemd:
+    name: cockroach
+    enabled: yes
+  become: true
+  notify: start cockroach

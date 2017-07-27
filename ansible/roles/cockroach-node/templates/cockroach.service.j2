@@ -1,0 +1,29 @@
+[Unit]
+Description=Cockroach DB service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+{% if ansible_ssh_host == hostvars[groups["tag_cockroachdb-cluster-node"][0]]["ansible_ssh_host"] %}
+{# the master node which does not join any other node #}
+ExecStart=/usr/local/bin/cockroach start \
+    --insecure \
+    --host={{ gce_private_ip }} \
+    --store={{ cockroach_node.datadir }} \
+    --log-dir={{ cockroach_node.logdir }} \
+    --logtostderr=ERROR
+{% else %}
+{# the other nodes which join the master node on their private IP address #}
+ExecStart=/usr/local/bin/cockroach start \
+    --insecure \
+    --host={{ gce_private_ip }} \
+    --join={{ hostvars[groups["tag_cockroachdb-cluster-node"][0]]["gce_private_ip"] }}:26257 \
+    --store={{ cockroach_node.datadir }} \
+    --log-dir={{ cockroach_node.logdir }} \
+    --logtostderr=ERROR
+{% endif %}
+ExecStop=/usr/local/bin/cockroach quit 
+SyslogIdentifier=cockroachdb
+Restart=always
+LimitNOFILE=35000

@@ -23,8 +23,9 @@
 
   pre_tasks:
     - name: wait for SSH to come up
-      wait_for: 
-        delay: 1 
+      wait_for:
+        delay: 10
+        connect_timeout: 30
         host: "{{ ansible_ssh_host }}" 
         port: 22 
         state: started 
