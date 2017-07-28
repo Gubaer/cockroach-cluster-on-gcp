@@ -1,8 +1,10 @@
 
 # 
 # play to stop the cockroachdb software
+#
 - hosts: "tag_cockroachdb-cluster-node"
   gather_facts: false
+  strategy: free
 
   tasks:
     - name: stop cockroach
@@ -15,9 +17,12 @@
 #
 - hosts: localhost
   gather_facts: false
+  strategy: free
 
   vars:
     num_cluster_nodes: 2
 
-  roles:
-    - {role: cluster, action: "stop"} 
+  tasks:
+    - include_role:
+        name: cluster
+        from_tasks: stop

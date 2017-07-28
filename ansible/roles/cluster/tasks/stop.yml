@@ -1,3 +1,6 @@
+#
+# tasks to stop the cluster nodes
+# 
 - name: stop the cluster nodes
   gce:
     instance_names: "cockroachdb-cluster-node-{{ item }}"
