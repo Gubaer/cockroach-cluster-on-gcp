@@ -1,0 +1,14 @@
+#
+# tasks for role sshserver
+#
+
+- name: "wait for connection to {{ ansible_ssh_host }}"
+  wait_for_connection:
+    timeout: 120
+
+- name: "wait for SSH to come up on {{ ansible_ssh_host }}"
+  wait_for: 
+    host: "{{ ansible_ssh_host }}"
+    port: 22 
+    state: started
+    timeout: 360

@@ -4,13 +4,16 @@
 #
 - hosts: localhost
   gather_facts: false
+  strategy: free
 
   vars:
     num_cluster_nodes: 2
 
   roles:
-    - {role: cluster, action: "create"}
-
+    - import_role:
+        name: cluster
+        from_tasks: create
+        
   post_tasks:
     - shell: ./gce.py --refresh-cache
     - meta: refresh_inventory
@@ -20,16 +23,12 @@
 #
 - hosts: "tag_cockroachdb-cluster-node"
   gather_facts: false
+  strategy: free
 
   pre_tasks:
-    - name: wait for SSH to come up
-      wait_for:
-        delay: 10
-        connect_timeout: 30
-        host: "{{ ansible_ssh_host }}" 
-        port: 22 
-        state: started 
-        timeout: 360
+    - include_role:
+        name: sshserver
+        from_tasks: wait-for-ssh
 
   roles:
     - ubuntu-node
