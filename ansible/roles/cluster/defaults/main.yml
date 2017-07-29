@@ -31,5 +31,5 @@ subnets:
 
 # num seconds to pause before the VPC is terminated. GCP first has to
 # free up subnet ressources. 
-pause_interval: 5
+pause_interval: 10
 
