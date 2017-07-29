@@ -43,9 +43,6 @@
     dest: /etc/systemd/system/cockroach.service
   become: true
 
-- name: enable systemd service for cockroach
-  systemd:
-    name: cockroach
-    enabled: yes
-  become: true
+- name: trigger starting of cockroach db
+  shell: /bin/true
   notify: start cockroach

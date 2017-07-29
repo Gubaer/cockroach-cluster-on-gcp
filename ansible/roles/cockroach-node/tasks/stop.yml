@@ -1,0 +1,6 @@
+#
+# tasks to stop the cockroach db
+#
+- name: trigger shutdown of cockroach db
+  shell: /bin/true # noop 
+  notify: stop cockroach

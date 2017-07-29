@@ -3,9 +3,14 @@
 #
 - hosts: localhost
   gather_facts: false
+  # don't use free strategy. play relies on module 'pause'
+  # which is not compatible with the free strategy
+  # strategy: free   
 
   vars:
     num_cluster_nodes: 2
 
-  roles:
-    - {role: cluster, action: "terminate"} 
+  tasks:
+    - include_role:
+        name: cluster
+        tasks_from: terminate

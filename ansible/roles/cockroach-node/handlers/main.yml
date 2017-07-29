@@ -1,12 +1,13 @@
 #
-# handlers used on the cockroach db node 
+# handlers used on the cockroach db node
+#
 - name: start cockroach
   become: true
   systemd:
     name: cockroach
     state: started
 
-- name: stop cockroack
+- name: stop cockroach
   become: true
   systemd:
     name: cockroach

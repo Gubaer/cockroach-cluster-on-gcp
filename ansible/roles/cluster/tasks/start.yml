@@ -1,9 +1,9 @@
 #
-# tasks to stop the cluster nodes
-# 
-- name: stop the cluster nodes
+# tasks to start the cluster nodes
+#
+- name: start the cluster nodes
   gce:
     instance_names: "{{ hostvars[item]['gce_name'] }}"
-    state: stopped
+    state: started
     zone: "{{ hostvars[item]['gce_zone'] }}"
   with_items: "{{ groups['tag_cockroachdb-cluster-node'] }}"

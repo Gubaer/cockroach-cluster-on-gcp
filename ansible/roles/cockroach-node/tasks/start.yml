@@ -1,0 +1,17 @@
+#
+# tasks to start cockroach db
+#
+
+# rewrite the systemd service file. It includes the IP address
+# of the node itself and the IP addressen of nodes it joins in
+# the cluster. When the node is restarted, these addresses might
+# have changed.
+- name: install systemd service file for cockroach service
+  template:
+    src: cockroach.service.j2
+    dest: /etc/systemd/system/cockroach.service
+  become: true
+
+- name: trigger starting of cockroach db
+  shell: /bin/true # noop 
+  notify: start cockroach

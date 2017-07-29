@@ -1,24 +1,35 @@
 #
-# play to start the cluster
+# play to start the cluster nodes
 #
 - hosts: localhost
   gather_facts: false
+  strategy: free
 
-  vars:
-    num_cluster_nodes: 2
-
-  roles:
-    - {role: cluster, action: "start"}
+  tasks:
+    - include_role:
+        name: cluster
+        tasks_from: start
 
   post_tasks:
     - shell: ./gce.py --refresh-cache
     - meta: refresh_inventory
 
 # 
-# play to provision the cluster nodes
-# TODO: start cockroachdb
+# play to start cockroachdb on the cluster nodes
+#
 - hosts: "tag_cockroachdb-cluster-node"
   gather_facts: false
+  strategy: free
+
+  pre_tasks:
+    - include_role:
+        name: sshserver
+        tasks_from: wait-for-ssh
+
+  tasks:
+    - include_role:
+        name: cockroach-node
+        tasks_from: start
 
 
  

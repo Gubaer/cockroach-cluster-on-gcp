@@ -9,10 +9,10 @@
   vars:
     num_cluster_nodes: 2
 
-  roles:
-    - import_role:
+  tasks:
+    - include_role:
         name: cluster
-        from_tasks: create
+        tasks_from: create
         
   post_tasks:
     - shell: ./gce.py --refresh-cache
@@ -21,14 +21,14 @@
 # 
 # play to provision the cluster nodes
 #
-- hosts: "tag_cockroachdb-cluster-node"
+- hosts: tag_cockroachdb-cluster-node
   gather_facts: false
   strategy: free
 
   pre_tasks:
     - include_role:
         name: sshserver
-        from_tasks: wait-for-ssh
+        tasks_from: wait-for-ssh
 
   roles:
     - ubuntu-node

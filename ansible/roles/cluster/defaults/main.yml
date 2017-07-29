@@ -28,3 +28,8 @@ subnets:
   ipv4:
     europe: "10.132.0.0/20"
     us: "10.142.0.0/20"
+
+# num seconds to pause before the VPC is terminated. GCP first has to
+# free up subnet ressources. 
+pause_interval: 5
+
