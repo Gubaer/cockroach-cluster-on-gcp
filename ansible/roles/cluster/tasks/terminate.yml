@@ -8,11 +8,14 @@
     zone: "{{ [item | int % 2] | map('extract', [zones.europe, zones.us]) | list | join('')}}"
   with_sequence: count="{{ num_cluster_nodes }}" format="%02d"
 
-- name: terminate firewall rule
+- name: terminate firewall rules
   gce_net:
     name: "{{ vpc_name }}"
-    fwname: "allow-ssh-ingress"
+    fwname: "{{ item }}"
     state: absent
+  with_items:
+    - allow-ssh-ingress
+    - "{{ vpc_name }}-default-allow-internal"
 
 - name: terminate the subnets
   gce_net:
