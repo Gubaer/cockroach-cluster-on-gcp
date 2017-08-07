@@ -1,0 +1,16 @@
+- hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - include_role:
+        name: cockroach-node
+        tasks_from: ca-certificate
+
+- hosts: tag_cockroachdb-cluster-node
+  gather_facts: false
+
+  tasks:
+    - include_role:
+        name: cockroach-node
+        tasks_from: node-certificates
+

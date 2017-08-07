@@ -1,0 +1,44 @@
+#
+# tasks to create the certificates for the cluster nodes
+#
+
+- name: ensure there is a local 'certs' directory
+  local_action: file path=certs state=directory
+
+- name: create node key and certificate
+  local_action: shell cockroach cert create-node                 \
+        "{{ gce_private_ip }}"                     \
+        "{{ gce_public_ip }}"                      \
+        localhost                                \
+        127.0.0.1                                \
+        --overwrite \
+        --certs-dir=certs                        \
+        --ca-key=keys/ca.key
+
+- name: create remote certificate directory
+  become: true
+  file:
+    path: /etc/cockroach/certs
+    state: directory
+
+- name: upload ca key
+  become: true
+  copy:
+    src: keys/ca.key
+    dest: /etc/cockroach/certs
+    mode: 0700  
+
+- name: upload node certificate and node key
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: /etc/cockroach/certs
+    mode: 0700  
+  with_items:
+    - certs/node.crt
+    - certs/node.key
+
+- name: remove local node certificate and node key
+  local_action: file path="{{ item }}" state=absent
+  with_fileglob:
+    - certs/node.*
