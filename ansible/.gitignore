@@ -3,3 +3,5 @@ ansible.cfg
 secrets.py
 *.pyc
 *.retry
+certs
+keys
