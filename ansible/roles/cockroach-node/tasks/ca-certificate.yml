@@ -2,19 +2,19 @@
 # tasks to create the ca certificate
 #
 
-- name: create the directory for keys and certificates
+- name: ensure local directories for keys and certificates exist
   file: 
     path: "{{ item }}"
     state: directory
     mode: 0700
   with_items:
-    - certs     # the directory with the generated certificates
-    - keys      # the directory with the generated keys 
+    - "{{ local_certs_dir }}"     # the directory with the generated certificates
+    - "{{ local_keys_dir }}"      # the directory with the generated keys 
 
 - name: create the ca key and certificate
   shell: |
     cockroach cert create-ca \
       --allow-ca-key-reuse   \
-      --overwrite \
-      --certs-dir=certs      \
-      --ca-key=keys/ca.key
+      --overwrite            \
+      --certs-dir={{ local_certs_dir }}      \
+      --ca-key={{ local_keys_dir }}/ca.key

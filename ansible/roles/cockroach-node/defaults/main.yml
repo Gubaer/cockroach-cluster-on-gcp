@@ -6,3 +6,11 @@ cockroach_distribution:
 cockroach_node:
   datadir: /var/data/cockroachdb
   logdir: /var/log/cockroachdb
+
+# the local directory where generated certificates for cockroach 
+# are stored
+local_certs_dir: certs
+# the local directory where generated keys for cockroach are stored
+local_keys_dir: keys
+# the remote directory where certificates are deployed to
+remote_certs_dir: /etc/cockroach/certs
