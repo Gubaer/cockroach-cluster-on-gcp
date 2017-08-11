@@ -3,22 +3,30 @@
 #
 
 - name: ensure local directories for keys and certificates exist
+  delegate_to: localhost
   file: 
     path: "{{ item }}"
     state: directory
     mode: 0700
   with_items:
     - "{{ local_certs_dir }}"     # the directory with the generated certificates
-    - "{{ local_keys_dir }}"      # the directory with the generated keys 
+    - "{{ local_keys_dir }}"      # the directory with the generated keys
+    - "{{ local_certs_dir }}/{{ gce_public_ip }}"
+
+- name: "copy ca certificate to '{{ local_certs_dir }}/{{ gce_public_ip }}'"
+  delegate_to: localhost
+  shell: |
+    cp "{{ local_certs_dir }}"/ca.crt  \
+        {{ local_certs_dir }}/{{ gce_public_ip }}
 
 - name: create node key and certificate
   local_action: shell cockroach cert create-node       \
-        "{{ gce_private_ip }}"                         \
-        "{{ gce_public_ip }}"                          \
+        {{ gce_private_ip }}                         \
+        {{ gce_public_ip }}                          \
         localhost                                      \
         127.0.0.1                                      \
         --overwrite                                    \
-        --certs-dir={{ local_certs_dir }}              \
+        --certs-dir={{ local_certs_dir }}/{{ gce_public_ip }}   \
         --ca-key={{ local_keys_dir }}/ca.key
 
 - name: create remote certificate directory
@@ -27,24 +35,19 @@
     path: /etc/cockroach/certs
     state: directory
 
-- name: upload ca key
-  become: true
-  copy:
-    src: keys/ca.key
-    dest: "{{ remote_certs_dir }}"
-    mode: 0700  
-
-- name: upload node certificate and node key
+- name: upload node certificate, node key, and ca certificate
   become: true
   copy:
     src: "{{ item }}"
     dest: "{{ remote_certs_dir }}"
     mode: 0700  
   with_items:
-    - certs/node.crt
-    - certs/node.key
+    - "{{ local_certs_dir }}/{{ gce_public_ip }}/node.crt"
+    - "{{ local_certs_dir }}/{{ gce_public_ip }}/node.key"
+    - "{{ local_certs_dir }}/{{ gce_public_ip }}/ca.crt"
 
 - name: remove local node certificate and node key
   local_action: file path="{{ item }}" state=absent
   with_fileglob:
     - "{{ local_certs_dir }}/node.*"
+    - "{{ local_certs_dir }}/{{ gce_public_ip }}"

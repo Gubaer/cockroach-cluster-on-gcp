@@ -3,6 +3,7 @@
 #
 
 - name: ensure local directories for keys and certificates exist
+  delegate_to: localhost
   file: 
     path: "{{ item }}"
     state: directory
@@ -11,10 +12,24 @@
     - "{{ local_certs_dir }}"     # the directory with the generated certificates
     - "{{ local_keys_dir }}"      # the directory with the generated keys 
 
+- name: check whether ca key exists
+  delegate_to: localhost
+  stat:
+    path: "{{ local_keys_dir }}/ca.key"
+  register: ca_key
+
+- name: check whether ca certificate exists
+  delegate_to: localhost
+  stat:
+    path: "{{ local_certs_dir }}/ca.crt"
+  register: ca_crt
+
 - name: create the ca key and certificate
+  delegate_to: localhost
   shell: |
     cockroach cert create-ca \
       --allow-ca-key-reuse   \
       --overwrite            \
       --certs-dir={{ local_certs_dir }}      \
       --ca-key={{ local_keys_dir }}/ca.key
+  when: not ca_key.stat.exists or not ca_crt.stat.exists

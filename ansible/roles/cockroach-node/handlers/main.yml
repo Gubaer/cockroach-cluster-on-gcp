@@ -13,3 +13,10 @@
     name: cockroach
     state: stopped
 
+- name: restart cockroach
+  become: true
+  systemd:
+    name: cockroach
+    state: restarted
+
+

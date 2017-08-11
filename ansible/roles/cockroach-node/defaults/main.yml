@@ -14,3 +14,7 @@ local_certs_dir: certs
 local_keys_dir: keys
 # the remote directory where certificates are deployed to
 remote_certs_dir: /etc/cockroach/certs
+
+# the list of users for which we generate client certificates
+client_users:
+  - root

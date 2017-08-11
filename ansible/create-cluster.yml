@@ -2,9 +2,9 @@
 # play to create the cluster including the network, the disks,
 # and the compute engine nodes
 #
-- hosts: localhost
+- name: create cloud infrastructure
+  hosts: localhost
   gather_facts: false
-  strategy: free
 
   vars:
     num_cluster_nodes: 2
@@ -21,15 +21,36 @@
 # 
 # play to provision the cluster nodes
 #
-- hosts: tag_cockroachdb-cluster-node
+- name: provision and configure cockroach 
+  hosts: tag_cockroachdb-cluster-node
   gather_facts: false
-  strategy: free
 
   pre_tasks:
     - include_role:
         name: sshserver
         tasks_from: wait-for-ssh
 
-  roles:
-    - ubuntu-node
-    - cockroach-node
+  tasks:
+    - name: update the operating system
+      include_role:
+        name: ubuntu-node
+
+    - name: install and configure cockroach 
+      include_role:
+        name: cockroach-node
+
+    - name: generate and deploy the certificates
+      block:
+        - include_role:
+            name: cockroach-node
+            tasks_from: ca-certificate
+        - include_role:
+            name: cockroach-node
+            tasks_from: node-certificates
+        - include_role:
+            name: cockroach-node
+            tasks_from: client-certificate
+
+    - name: restart cockroach service
+      shell: /bin/true
+      notify: restart cockroach

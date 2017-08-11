@@ -1,5 +1,5 @@
 #
-# tasks to to install the cockroach distribution
+# tasks to install the cockroach distribution
 #
 - name: get the cockroach distribution
   get_url:

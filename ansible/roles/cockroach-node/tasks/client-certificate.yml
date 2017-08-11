@@ -1,0 +1,20 @@
+#
+# tasks to create the client certificates
+#
+
+- name: ensure local directories for keys and certificates exist
+  file: 
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+  with_items:
+    - "{{ local_certs_dir }}"     # the directory with the generated certificates
+    - "{{ local_keys_dir }}"      # the directory with the generated keys 
+
+- name: create the client certificates
+  local_action: shell cockroach cert create-client \
+      {{item }}
+      --overwrite            \
+      --certs-dir={{ local_certs_dir }}      \
+      --ca-key={{ local_keys_dir }}/ca.key
+  with_items: "{{ client_users }}"
