@@ -1,7 +1,7 @@
 #
 # tasks to to install the cockroach distribution
 #
-- name: get the coackroach distribution
+- name: get the cockroach distribution
   get_url:
     url: "{{ cockroach_distribution.url }}"
     dest: "/tmp/{{ cockroach_distribution.filename }}"
@@ -13,14 +13,14 @@
     dest: /usr/local
   become: true
 
-- name: create a symlink for the coachroach distribution
+- name: create a symlink for the cockroach distribution
   file:
     src: "/usr/local/{{ (cockroach_distribution.filename | splitext)[0] }}"
     dest: /usr/local/cockroach
     state: link
   become: true
 
-- name: create a symlink to the coachroach binary
+- name: create a symlink to the cockroach binary
   file:
     src: /usr/local/cockroach/cockroach
     dest: /usr/local/bin/cockroach
