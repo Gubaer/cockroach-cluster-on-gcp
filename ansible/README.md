@@ -19,6 +19,5 @@ Log into the Google [Clould Plattform console](https://console.cloud.google.com/
 
 1. Create a project, i.e. `cockroachdb-cluster`
 2. Create a service account in the project, i.e. `cockroachdbuser` and assign it the role `owner`
-   for the project
 3. Create a key for the new user, download the credentials. You will need this file
    als credentials when you run the ansible playbooks.
