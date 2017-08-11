@@ -21,6 +21,14 @@
     src_range: ["0.0.0.0/0"]  # from everywhere
     state: present
 
+- name: allow cockroach ingress into every node in the cluster
+  gce_net:
+    name: "{{ vpc_name }}"
+    fwname: "allow-cockroach-ingress"
+    allowed: tcp:26257
+    src_range: ["0.0.0.0/0"]  # from everywhere
+    state: present
+
 - name: allow any traffic within the two subnets
   gce_net:
     name: "{{ vpc_name }}"

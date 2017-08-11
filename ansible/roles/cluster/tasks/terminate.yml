@@ -16,6 +16,7 @@
   with_items:
     - allow-ssh-ingress
     - "{{ vpc_name }}-default-allow-internal"
+    - allow-cockroach-ingress
 
 - name: terminate the subnets
   gce_net:
