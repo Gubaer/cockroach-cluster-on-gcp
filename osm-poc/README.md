@@ -34,3 +34,28 @@ python module to import osm data from a pbf file
 # libtokyocabinet-dev and run 'pip install' again
 % sudo apt install libtokyocabinet-dev
 ```
+
+# Create or drop the database
+You need the public ip address of one of the cluster nodes:
+```bash
+% cd ansible
+% ./gce.py --refresh-cache --pretty | grep gce_public_ip
+"gce_public_ip": "<public-ip>", 
+"gce_public_ip": "<public-ip>",
+```
+
+## Create the database
+```bash
+% cockroach sql --host <public-ip> --certs-dir ../ansible/certs
+root@public-ip> /* run the sql script to create the database */
+root@public-ip> \| cat create-osm-db.sql
+```
+
+# Drop the database
+```bash
+% cockroach sql --host <public-ip> --certs-dir ../ansible/certs
+root@public-ip> /* drop the database*/
+root@public-ip> drop database osm;
+```
+
+
