@@ -59,3 +59,22 @@ root@public-ip> drop database osm;
 ```
 
 
+# Import data from a CSV file
+
+
+## node data
+```
+IMPORT TABLE osm.nodes (
+    id INT PRIMARY KEY,
+    version INT NOT NULL,
+    lat DECIMAL NOT NULL,
+    lon DECIMAL NOT NULL,
+    changeset_id INT NOT NULL,
+    visible BOOLEAN NOT NULL
+)
+CSV DATA ('s3://cockroach-import/nodes.csv?AWS_ACCESS_KEY_ID=AKIAIDWJOSVCATM2WRDQ&AWS_SECRET_ACCESS_KEY=QPqWa0VZerNLfwmR52oKjVFZF%2F6ct%2B4d1bifSkXL')
+WITH
+    temp = 's3://cockroach-import/?AWS_ACCESS_KEY_ID=AKIAIDWJOSVCATM2WRDQ&AWS_SECRET_ACCESS_KEY=QPqWa0VZerNLfwmR52oKjVFZF%2F6ct%2B4d1bifSkXL',
+    delimiter = ','
+;
+```
