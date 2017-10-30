@@ -21,6 +21,6 @@ $ s3cmd --configure
 ```bash
 # uplad a csv file to the S3 bucket
 # for instance:
-# s3cmd put s3://cockroach-import/nodes.csv nodes.csv
-$ s3cmd put s3://<bucket-name>/<file-name> <file-name>
+# s3cmd put nodes.csv s3://cockroach-import/nodes.csv
+$ s3cmd put <file-name> s3://<bucket-name>/<file-name>
 ```
