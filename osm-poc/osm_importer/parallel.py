@@ -1,4 +1,4 @@
-from Queue import Queue
+from multiprocessing import Process, Queue
 import psycopg2
 import psycopg2.sql
 from threading import Thread
@@ -42,8 +42,8 @@ class Feeder(object):
         self.target_node = target_node
         self.cursor = cursor
         self.queue = queue
-        thread = Thread(target=self._run, args=())
-        thread.start()
+        process = Process(target=self._run, args=())
+        process.start()
 
     def _insert_values(self, values):
         def make_node_row(node):
@@ -88,6 +88,7 @@ class Reader(object):
     """Reads osm data from an file and submits it to a collection
     of concurrent feeders. 
     """
+    
     # a dictionary of open crdb cursors. The key is the ip address of a crdb
     # node in the remote crdb cluster
     cursors = None
