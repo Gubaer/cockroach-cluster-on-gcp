@@ -6,8 +6,10 @@
   hosts: localhost
   gather_facts: false
 
-  vars:
-    num_cluster_nodes: 2
+  vars_prompt:
+    name: num_cluster_nodes
+    prompt: "Number of cluster nodes (n>=2, choose an even number) [default=2]"
+    default: 2
 
   tasks:
     - include_role:
