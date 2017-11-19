@@ -7,8 +7,10 @@
   # which is not compatible with the free strategy
   # strategy: free   
 
-  vars:
-    num_cluster_nodes: 2
+  vars_prompt:
+    name: num_cluster_nodes
+    prompt: "Number of cluster nodes in the cluster [default=2]"
+    default: 2
 
   tasks:
     - include_role:
