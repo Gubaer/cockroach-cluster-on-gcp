@@ -78,3 +78,6 @@ WITH
     delimiter = ','
 ;
 ```
+
+
+# Limitations of CSV import and possible work arounds
