@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS osm.node_tags (
     key STRING NOT NULL,
     value STRING NOT NULL,
     PRIMARY KEY (node_id, id),
-    CONSTRAINT fk_node_tags FOREIGN KEY (node_id) REFERENCES osm.nodes
+    CONSTRAINT fk_node_tags FOREIGN KEY (node_id) REFERENCES osm.nodes,
+    INDEX key_value_idx (key, value)
 ) INTERLEAVE IN PARENT nodes (node_id);
 
 CREATE TABLE IF NOT EXISTS osm.ways (
@@ -46,7 +47,8 @@ CREATE TABLE IF NOT EXISTS osm.way_tags (
     key STRING NOT NULL,
     value STRING NOT NULL,
     PRIMARY KEY (way_id, id),
-    CONSTRAINT fk_way_tags FOREIGN KEY (way_id) REFERENCES osm.ways
+    CONSTRAINT fk_way_tags FOREIGN KEY (way_id) REFERENCES osm.ways,
+    INDEX key_value_idx (key, value)
 ) INTERLEAVE IN PARENT ways (way_id);
 
 CREATE TABLE IF NOT EXISTS osm.way_nodes (
@@ -55,7 +57,10 @@ CREATE TABLE IF NOT EXISTS osm.way_nodes (
     sequence_id INT NOT NULL,
     PRIMARY KEY (way_id, node_id, sequence_id),
     CONSTRAINT fk_way FOREIGN KEY (way_id) REFERENCES osm.ways,
-    CONSTRAINT fk_node FOREIGN KEY (node_id) REFERENCES osm.nodes
+    --TODO: enable after tests
+    --CONSTRAINT fk_node FOREIGN KEY (node_id) REFERENCES osm.nodes,
+    INDEX parent_ways (node_id, way_id, sequence_id)
+--TODO: wirklich INTERLEAVE? Was bringt das?
 ) INTERLEAVE IN PARENT ways (way_id);
 
 CREATE TABLE IF NOT EXISTS osm.relations (
@@ -67,6 +72,7 @@ CREATE TABLE IF NOT EXISTS osm.relations (
 );
 
 CREATE TABLE IF NOT EXISTS osm.relation_members (
+    -- TODO: serial id? necessary?
     id SERIAL NOT NULL,
     relation_id INT NOT NULL,
     sequence_id INT NOT NULL DEFAULT 0,
@@ -74,8 +80,10 @@ CREATE TABLE IF NOT EXISTS osm.relation_members (
     -- 0: node, 1: way, 2: relation
     member_type INT NOT NULL,
     member_id INT NOT NULL,
-    PRIMARY KEY (relation_id, sequence_id, id),
-    CONSTRAINT fk_relation FOREIGN KEY (relation_id) REFERENCES osm.relations
+    PRIMARY KEY (relation_id, sequence_id, id)
+    -- disabled for testing, enable later
+    -- CONSTRAINT fk_relation FOREIGN KEY (relation_id) REFERENCES osm.relations
+-- TODO: wirlich INTERLEAVE? Was bringt das?
 ) INTERLEAVE IN PARENT relations (relation_id);
 
 CREATE TABLE IF NOT EXISTS osm.relation_tags (
@@ -84,6 +92,9 @@ CREATE TABLE IF NOT EXISTS osm.relation_tags (
     key STRING NOT NULL,
     value STRING NOT NULL,
     PRIMARY KEY (relation_id, id),
-    CONSTRAINT fk_relation_tags FOREIGN KEY (relation_id) REFERENCES osm.relations
+    -- disabled for testing, enabled later
+    -- CONSTRAINT fk_relation_tags FOREIGN KEY (relation_id) REFERENCES osm.relations,
+    INDEX key_value_idx (key, value)
 ) INTERLEAVE IN PARENT relations (relation_id);
+-- TODO: wirklich INTERLEAVE? Was bringt das?
 

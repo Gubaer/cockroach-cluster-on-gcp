@@ -26,7 +26,7 @@ print("cluster ip addresses: {}",ip_addresses)
 
 reader = Reader()
 reader.setup(ip_addresses)
-reader.import_nodes(DEFAULT_IMPORT_FILE)
+reader.import_file(DEFAULT_IMPORT_FILE)
 reader.tear_down()
 
 
