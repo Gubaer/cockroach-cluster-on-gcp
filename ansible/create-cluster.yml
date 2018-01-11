@@ -10,6 +10,7 @@
     name: num_cluster_nodes
     prompt: "Number of cluster nodes (n>=2, choose an even number) [default=2]"
     default: 2
+    private: no
 
   tasks:
     - include_role:
@@ -23,7 +24,7 @@
 # 
 # play to provision the cluster nodes
 #
-- name: provision and configure cockroach 
+- name: provision and configure cockroach
   hosts: tag_cockroachdb-cluster-node
   gather_facts: false
 

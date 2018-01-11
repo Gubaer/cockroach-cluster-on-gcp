@@ -11,6 +11,7 @@
     name: num_cluster_nodes
     prompt: "Number of cluster nodes in the cluster [default=2]"
     default: 2
+    private: no
 
   tasks:
     - include_role:
