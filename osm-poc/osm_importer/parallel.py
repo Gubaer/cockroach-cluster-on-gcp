@@ -6,6 +6,28 @@ from imposm.parser import OSMParser
 
 _FEEDER_COUNTER=0
 
+def slices(data, slice_size=1000):
+    """Generates a sequence of slices of size slice_size for the elements
+    in data. A slice is a tuple (lower, upper, data_slice) where data_slice is 
+    a slice of the data array"""
+    lower = 0
+    upper = 0
+    while lower < len(data):
+        upper = min(upper + slice_size, len(data))
+        yield (lower, upper, data[lower:upper])
+        lower = upper
+
+def slices_enumerated(data, slice_size=1000):
+    """Generates a sequence of slices of size slice_size for the elements
+    in data. A slice is a tuple (lower, upper, enumerated_data_slice) where 
+    enumerated_data_slice is  a an enumearted slice of the data array"""
+    lower = 0
+    upper = 0
+    while lower < len(data):
+        upper = min(upper + slice_size, len(data))
+        yield (lower, upper, list(enumerate(data[lower:upper])))
+        lower = upper
+
 class Feeder(object):
     """Reads batches of rows to be inserted into crdb tables
     and submits them to the remote crdb cluster it is connected
@@ -27,6 +49,10 @@ class Feeder(object):
 
     # the process for this feeder
     process = None
+
+    def _insert_data(self, template, row_builder, data):
+        sql = template.format(",".join(map(row_builder, data)))
+        self.cursor.execute(sql)
 
     def __init__(self, target_node, cursor, queue):
         """
@@ -76,26 +102,16 @@ class Feeder(object):
                 psycopg2.sql.Literal(value)).as_string(self.cursor)
 
         (value_type, nodes, node_tags) = values
-        sql = Feeder.INSERT_TEMPLATE_NODES.format(
-            ",".join(map(make_node_row, nodes))
-        )
         print("{}/{}: inserting {} nodes ...".format(
             self.target_node, self.id, len(nodes)))
-        self.cursor.execute(sql)
+        self._insert_data(Feeder.INSERT_TEMPLATE_NODES, make_node_row, nodes)
 
         # insert node tags into osm.node_tags
         #
-        lower = 0
-        upper = 0
-        while lower < len(node_tags):
-            upper = min(upper + 1000, len(node_tags))
-            sql = Feeder.INSERT_TEMPLATE_NODE_TAGS.format(
-                ",".join(map(make_node_tag_row, node_tags[lower:upper]))
-            )
+        for lower, upper, data in slices(node_tags):
             print("  {}/{}: inserting {}/{} node tags ...".format(
                 self.target_node, self.id, upper-lower, len(node_tags)))
-            self.cursor.execute(sql)
-            lower = upper
+            self._insert_data(Feeder.INSERT_TEMPLATE_NODE_TAGS, make_node_tag_row, data)
 
     INSERT_TEMPLATE_WAYS = """
        INSERT INTO osm.ways
@@ -138,41 +154,21 @@ class Feeder(object):
 
         # insert ways into osm.ways
         #
-        sql = Feeder.INSERT_TEMPLATE_WAYS.format(
-                ",".join(map(make_way_row, ways))
-            )
         print("{}/{}: inserting {} ways ...".format(
             self.target_node, self.id, len(ways)))
-        self.cursor.execute(sql)
+        self._insert_data(Feeder.INSERT_TEMPLATE_WAYS, make_way_row, ways)
 
-        # insert way tags into osm.way_tags
-        #
-        lower = 0
-        upper = 0
-        while lower < len(way_tags):
-            upper = min(upper + 1000, len(way_tags))
-            sql = Feeder.INSERT_TEMPLATE_WAY_TAGS.format(
-                    ",".join(map(make_way_tag_row, way_tags[lower:upper]))
-                )
+        for lower, upper, data in slices(way_tags):
             print("  {}/{}: inserting {}/{} way tags ...".format(
                 self.target_node, self.id, upper-lower, len(way_tags)))
-            self.cursor.execute(sql)
-            lower = upper
+            self._insert_data(Feeder.INSERT_TEMPLATE_WAY_TAGS, make_way_tag_row, data)
 
         # insert ways child nodes into osm.way_nodes
         #
-        lower = 0
-        upper = 0
-        while lower < len(way_nodes):
-            upper = min(upper + 1000, len(way_nodes))
-            sql = Feeder.INSERT_TEMPLATE_WAY_NODES.format(
-                    ",".join(map(make_way_node_row, 
-                        list(enumerate(way_nodes[lower:upper]))))
-                )
+        for lower, upper, data in slices_enumerated(way_nodes):
             print("  {}/{}: inserting {}/{} way nodes ...".format(
                 self.target_node, self.id, upper-lower, len(way_nodes)))
-            self.cursor.execute(sql)
-            lower = upper
+            self._insert_data(Feeder.INSERT_TEMPLATE_WAY_NODES, make_way_node_row, data)
 
 
     INSERT_TEMPLATE_RELATIONS = """
@@ -196,6 +192,7 @@ class Feeder(object):
        {}
        RETURNING NOTHING;
     """
+
     def _insert_relations(self, values):
 
         def make_relation_row(relation_id):
@@ -230,40 +227,22 @@ class Feeder(object):
         
         # insert relations into osm.relations
         #
-        sql = Feeder.INSERT_TEMPLATE_RELATIONS.format(
-                ",".join(map(make_relation_row, relations))
-            )
         print("{}/{}: inserting {} relations ...".format(
             self.target_node, self.id, len(relations)))
-        self.cursor.execute(sql)
+        self._insert_data(Feeder.INSERT_TEMPLATE_RELATIONS, make_relation_row, relations)
 
         # insert relation tags into osm.relation_tags
         #
-        lower = 0
-        upper = 0
-        while lower < len(relation_tags):
-            upper = min(upper + 1000, len(relation_tags))
-            sql = Feeder.INSERT_TEMPLATE_RELATION_TAGS.format(
-                ",".join(map(make_relation_tag_row, relation_tags[lower:upper]))
-            )
+        for lower, upper, data in slices(relation_tags):
             print("  {}/{}: inserting {}/{} relation tags ...".format(
                 self.target_node, self.id, upper-lower, len(relation_tags)))
-            self.cursor.execute(sql)
-            lower = upper
+            self._insert_data(Feeder.INSERT_TEMPLATE_RELATION_TAGS, make_relation_tag_row, data)
 
         # insert relation members into osm.relation_members
-        lower = 0
-        upper = 0
-        while lower < len(relation_members):
-            upper = min(upper + 1000, len(relation_members))
-            sql = Feeder.INSERT_TEMPLATE_RELATION_MEMBERS.format(
-                ",".join(map(make_relation_member_row, 
-                    list(enumerate(relation_members[lower:upper]))))
-            )
+        for lower, upper, data in slices_enumerated(relation_members):
             print("  {}/{}: inserting {}/{} relation members ...".format(
                 self.target_node, self.id, upper-lower, len(relation_members)))
-            self.cursor.execute(sql)
-            lower = upper
+            self._insert_data(Feeder.INSERT_TEMPLATE_RELATION_MEMBERS, make_relation_member_row, data)
 
     def _insert_values(self, values):
         value_type = values[0]
@@ -398,7 +377,6 @@ class Reader(object):
         for feeder in list(self.feeders.values):
             feeder.process.join()
 
-
     def import_file(self, file_name):
         """Parses a file and feeds and imports the parsed osm primitives
         into a remote crdb cluster
@@ -407,8 +385,8 @@ class Reader(object):
         file_name -- the name of the input file
         """
         parser = OSMParser(concurrency=10,
-            nodes_callback=self._on_nodes,
-            ways_callback=self._on_ways,
+            #nodes_callback=self._on_nodes,
+            #ways_callback=self._on_ways,
             relations_callback=self._on_relations
         )
         parser.parse(file_name)
