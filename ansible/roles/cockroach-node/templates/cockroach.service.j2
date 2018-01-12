@@ -7,20 +7,26 @@ WantedBy=multi-user.target
 [Service]
 {% if ansible_ssh_host == hostvars[groups["tag_cockroachdb-cluster-node"][0]]["ansible_ssh_host"] %}
 {# the master node which does not join any other node #}
-ExecStart=/usr/local/bin/cockroach start  \
-    --host={{ gce_private_ip }}           \
-    --certs-dir={{ remote_certs_dir }}    \
-    --store={{ cockroach_node.datadir }}  \
-    --log-dir={{ cockroach_node.logdir }} \
+ExecStart=/usr/local/bin/cockroach start       \
+    --host={{ gce_private_ip }}                \
+    --port={{ cockroach_node.port }}           \
+    --http-host={{ gce_private_ip }}           \
+    --http-port={{ cockroach_node.http_port }} \
+    --certs-dir={{ remote_certs_dir }}         \
+    --store={{ cockroach_node.datadir }}       \
+    --log-dir={{ cockroach_node.logdir }}      \
     --logtostderr=ERROR
 {% else %}
 {# the other nodes which join the master node on their private IP address #}
-ExecStart=/usr/local/bin/cockroach start  \
-    --host={{ gce_private_ip }}           \
-    --certs-dir={{ remote_certs_dir }}    \
-    --join={{ hostvars[groups["tag_cockroachdb-cluster-node"][0]]["gce_private_ip"] }}:26257 \
-    --store={{ cockroach_node.datadir }}  \
-    --log-dir={{ cockroach_node.logdir }} \
+ExecStart=/usr/local/bin/cockroach start       \
+    --host={{ gce_private_ip }}                \
+    --port={{ cockroach_node.port }}           \
+    --http-host={{ gce_private_ip }}           \
+    --http-port={{ cockroach_node.http_port }} \
+    --certs-dir={{ remote_certs_dir }}         \
+    --join={{ hostvars[groups["tag_cockroachdb-cluster-node"][0]]["gce_private_ip"] }}:{{ cockroach_node.port }} \
+    --store={{ cockroach_node.datadir }}       \
+    --log-dir={{ cockroach_node.logdir }}      \
     --logtostderr=ERROR
 {% endif %}
 ExecStop=/usr/local/bin/cockroach quit

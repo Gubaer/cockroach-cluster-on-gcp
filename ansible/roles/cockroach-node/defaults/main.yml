@@ -6,6 +6,10 @@ cockroach_distribution:
 cockroach_node:
   datadir: /var/data/cockroachdb
   logdir: /var/log/cockroachdb
+  # the port on which the cockroach API is exposed
+  port: 26257
+  # the port on which the admin GUI is exposed
+  http_port: 8080
 
 # the local directory where generated certificates for cockroach 
 # are stored
