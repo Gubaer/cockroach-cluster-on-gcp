@@ -26,6 +26,9 @@
 #
 - name: provision and configure cockroach
   hosts: tag_cockroachdb-cluster-node
+  # disable. strange behaviour. Sometimes can't find or access a directory
+  # on localhost
+  #strategy: free
   gather_facts: false
 
   pre_tasks:
