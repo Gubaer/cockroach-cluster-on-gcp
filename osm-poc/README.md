@@ -51,13 +51,35 @@ root@public-ip> /* run the sql script to create the database */
 root@public-ip> \| cat create-osm-db.sql
 ```
 
-# Drop the database
+## Drop the database
 ```bash
 % cockroach sql --host <public-ip> --certs-dir ../ansible/certs
 root@public-ip> /* drop the database*/
 root@public-ip> drop database osm;
 ```
 
+# Access the admin web UI for the cluster
+
+The admin web UI is exposed by every node in the cluster, but you have to use a port forwarding SSH
+tunnel to access it
+
+```bash
+# you can find the required IP addresses in the output of
+#  gce.py --refresh-cache --pretty
+#
+
+$ NODE_PUBLIC_IP=<the public ip of cluster node>
+$ NODE_PRIVATE_IP=<the private ip of the same node>
+
+# -i ... : the path to the private key of the used identity
+# -L ... : port forwarding from remote 8080 to local 8080
+# kgkacon@... : the remote ssh user 
+#
+$ ssh -i ~/.ssh/kgkacon -L 8080:${NODE_PRIVATE_IP}:8080 kgkacon@${NODE_PUBLIC_IP}
+
+# launch a local browser with http://localhost:8080 to access the admin web UI exposed
+# by the cluster node ${NODE_PUBLIC_IP}
+```
 
 # Import data from a CSV file
 
