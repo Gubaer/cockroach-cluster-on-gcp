@@ -15,7 +15,9 @@ ExecStart=/usr/local/bin/cockroach start       \
     --certs-dir={{ remote_certs_dir }}         \
     --store={{ cockroach_node.datadir }}       \
     --log-dir={{ cockroach_node.logdir }}      \
-    --logtostderr=ERROR
+    --logtostderr=ERROR                        \
+    --locality=datacenter={{ gce_zone }}
+
 {% else %}
 {# the other nodes which join the master node on their private IP address #}
 ExecStart=/usr/local/bin/cockroach start       \
@@ -27,7 +29,9 @@ ExecStart=/usr/local/bin/cockroach start       \
     --join={{ hostvars[groups["tag_cockroachdb-cluster-node"][0]]["gce_private_ip"] }}:{{ cockroach_node.port }} \
     --store={{ cockroach_node.datadir }}       \
     --log-dir={{ cockroach_node.logdir }}      \
-    --logtostderr=ERROR
+    --logtostderr=ERROR                        \
+    --locality=datacenter={{ gce_zone }}
+
 {% endif %}
 ExecStop=/usr/local/bin/cockroach quit
 SyslogIdentifier=cockroachdb
