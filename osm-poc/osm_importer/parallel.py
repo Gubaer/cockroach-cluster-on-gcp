@@ -385,8 +385,8 @@ class Reader(object):
         file_name -- the name of the input file
         """
         parser = OSMParser(concurrency=10,
-            #nodes_callback=self._on_nodes,
-            #ways_callback=self._on_ways,
+            nodes_callback=self._on_nodes,
+            ways_callback=self._on_ways,
             relations_callback=self._on_relations
         )
         parser.parse(file_name)
