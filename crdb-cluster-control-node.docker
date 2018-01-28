@@ -1,0 +1,51 @@
+FROM ubuntu:17.10
+
+
+# install ansible
+RUN apt-get -y update && apt-get -y install \
+    software-properties-common
+RUN apt-add-repository ppa:ansible/ansible
+RUN apt-get -y update && apt-get -y install \
+    ansible
+
+# python-pip, ibtokyocabinet-dev - required to use imposm
+# others - required for building protobuf
+RUN apt-get -y update  && apt-get -y install \
+    git \
+    wget \
+    python-pip \
+    autoconf \
+    automake \
+    libtool \
+    curl \
+    make \
+    g++ \
+    unzip \
+    libtokyocabinet-dev
+
+# download and build protobuf
+RUN git clone https://github.com/google/protobuf/  \
+    && cd protobuf  \
+    && ./autogen.sh \
+    && ./configure \
+    && make \
+    && make install \
+    && ldconfig \
+    && cd .. \
+    && rm -rf protobuf
+
+# install python modules
+RUN    pip install -U pip  \
+    && pip install imposm \
+    && pip install psycopg2 \
+    && pip install apache-libcloud==1.5.0
+
+# download and install crdb
+RUN cd /  \
+    &&  wget -qO- https://binaries.cockroachdb.com/cockroach-v1.1.4.linux-amd64.tgz \
+      | tar xvz 
+ENV PATH /cockroach-v1.1.4.linux-amd64:$PATH
+
+# the root directory with the ansible and the python scripts; and with the keys and certificates 
+VOLUME /control-node-home
+
