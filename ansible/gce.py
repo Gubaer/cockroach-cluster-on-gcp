@@ -438,8 +438,11 @@ class GceInventory(object):
 
             # To avoid making multiple requests per zone
             # we list all nodes and then filter the results
-            if zones and zone not in zones:
-                continue
+            
+            # BUG: doesn't work with multiple zones. GCE_ZONE with comma seperated list
+            # of zones fails in apache-libcloud. Disabling.
+            #if zones and zone not in zones:
+            #    continue
 
             if zone in groups:
                 groups[zone].append(name)
