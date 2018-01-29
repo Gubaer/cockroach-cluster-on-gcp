@@ -15,6 +15,10 @@
   tasks:
     - include_role:
         name: cluster
+        tasks_from: create-network
+
+    - include_role:
+        name: cluster
         tasks_from: create
         
   post_tasks:

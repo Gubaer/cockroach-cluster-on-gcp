@@ -1,42 +1,6 @@
 #
 # tasks to create the CockroachDB cluster on GCD
 #
-- name: create the virtual private network
-  gce_net:
-    name: "{{ vpc_name }}"
-    mode: custom
-    subnet_name: "{{ item.subnet_name }}"
-    subnet_region: "{{ item.subnet_region }}"
-    ipv4_range: "{{ item.ipv4_range }}"
-    state: present
-  with_items:
-    - { subnet_name: "{{ subnets.name.europe }}", subnet_region: "{{ subnets.region.europe }}", ipv4_range: "{{ subnets.ipv4.europe }}" }
-    - { subnet_name: "{{ subnets.name.us }}", subnet_region: "{{ subnets.region.us }}", ipv4_range: "{{ subnets.ipv4.us }}"}
-
-- name: allow ssh ingress into every node in the cluster
-  gce_net:
-    name: "{{ vpc_name }}"
-    fwname: "allow-ssh-ingress"
-    allowed: tcp:22
-    src_range: ["0.0.0.0/0"]  # from everywhere
-    state: present
-
-- name: allow cockroach ingress into every node in the cluster
-  gce_net:
-    name: "{{ vpc_name }}"
-    fwname: "allow-cockroach-ingress"
-    allowed: tcp:26257
-    src_range: ["0.0.0.0/0"]  # from everywhere
-    state: present
-
-- name: allow any traffic within the two subnets
-  gce_net:
-    name: "{{ vpc_name }}"
-    fwname: "{{ vpc_name }}-default-allow-internal"
-    allowed: "tcp:0-65535;udp:0-65535;icmp"
-    src_range: ["{{ subnets.ipv4.europe }}", "{{ subnets.ipv4.us }}"]
-    state: present
-
 - name: create the custom boot disks
   gce_pd:
       name: "cockroachdb-cluster-bootdisk-{{ item }}"
