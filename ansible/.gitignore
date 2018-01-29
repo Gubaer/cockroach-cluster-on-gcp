@@ -7,3 +7,4 @@ certs
 keys
 # don't publish, includes private information
 gce.env
+.ssh
