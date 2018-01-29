@@ -1,0 +1,45 @@
+#
+# play to create the cluster including the network, the disks,
+# and the compute engine nodes
+#
+- name: create control node
+  hosts: localhost
+  gather_facts: false
+
+
+  tasks:
+    - include_vars:
+        file: roles/cluster/defaults/main.yml
+
+    - include_role:
+        name: cluster
+        tasks_from: create-network
+
+    - include_role:
+        name: control-node
+        tasks_from: create
+        
+  post_tasks:
+    - shell: ./gce.py --refresh-cache
+    - meta: refresh_inventory
+
+# 
+# play to provision the cluster nodes
+#
+- name: provision and configure control-node
+  hosts: crdb-cluster-control-node
+  gather_facts: false
+
+  pre_tasks:
+    - include_role:
+        name: sshserver
+        tasks_from: wait-for-ssh
+
+  tasks:
+    - name: update the operating system
+      include_role:
+        name: ubuntu-node
+
+    - name: install docker
+      include_role:
+        name: docker

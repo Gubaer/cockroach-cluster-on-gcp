@@ -1,0 +1,29 @@
+#
+# tasks to create the crdb control node
+#
+- name: create the custom boot disk for the crdb-cluster-control-node
+  gce_pd:
+      name: "crdb-cluster-control-node-bootdisk"
+      image: "{{ image }}"
+      size_gb: "{{ bootdisk_size }}"
+      # half of the disks are created in an europe zone, the other half in a us zone
+      zone: "{{ zones.europe }}"
+      disk_type: pd-ssd
+      state: present
+
+- name: create the crdb cluster control node
+  gce:
+    instance_names: crdb-cluster-control-node
+    machine_type: "{{ machine_type }}"
+    image: "{{ image }}"
+    disks:
+      - name: "crdb-cluster-control-node-bootdisk"
+        mode: READ_WRITE
+    disk_auto_delete: true
+    tags: crdb-cluster-control-node
+    state: present
+    # half of the nodes are created in an europe zone, the other half in a us zone. They are assigned
+    # to the europe or US subnetwork respectively.
+    zone: "{{ zones.europe }}"
+    network: "{{ vpc_name }}"
+    subnetwork: "{{ subnets.name.europe }}"
