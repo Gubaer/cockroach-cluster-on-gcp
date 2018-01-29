@@ -35,6 +35,25 @@ python module to import osm data from a pbf file
 % sudo apt install libtokyocabinet-dev
 ```
 
+# Using a docker container 
+## build the container
+```bash
+cd control-node-container
+# this will build the cocker container with the tag 'gubaer/crdb-cluster-control-node'
+$ sudo docker build -t gubaer/crdb-cluster-control-node -f crdb-cluster-control-node.docker .
+```
+
+## run the container 
+```bash
+# launch the container
+$ sudo docker run \
+    -ti \
+    -v $(pwd):/control-node-home \
+    gubaer/crdb-cluster-control-node
+# shell prompt in the container 
+root@dc2fb7dce0e2:/#
+```
+
 # Create or drop the database
 You need the public ip address of one of the cluster nodes:
 ```bash
