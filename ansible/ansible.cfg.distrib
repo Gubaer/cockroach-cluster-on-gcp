@@ -10,4 +10,8 @@ private_key_file = /full/path/to/private_key_of_remote_user
 # disable host checking. If false, ansible will not promt you to
 # confirm the fingerprint of a remote host it connects to with
 # ssh.
-host_key_checking=false
+host_key_checking = false
+
+# the inventory script. Use the gce inventory script provided
+# in this directory
+inventory = ./gce.py
