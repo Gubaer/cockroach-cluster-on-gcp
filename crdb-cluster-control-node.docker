@@ -1,5 +1,14 @@
-FROM ubuntu:17.10
+#
+# builds the docker container for the crdb cluster control node. It includes
+# the required software packages
+#  - to create the crdb cluster on the Google Cloud Plattform using ansible
+#  - to create the OSM database in the cluster
+#  - to import an extract of the OSM database using python and psycopg2
+#
+# How to build:
+# $ sudo docker build -t gubaer/crdb-cluster-control-node -f crdb-cluster-control-node.docker .
 
+FROM ubuntu:17.10
 
 # install ansible
 RUN apt-get -y update && apt-get -y install \
