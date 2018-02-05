@@ -2,6 +2,7 @@
 # imports OSM nodes into a crdb cluster
 #
 import re
+import json
 import subprocess
 from osm_importer.parallel import Reader
 
@@ -12,17 +13,16 @@ def cluster_ip_addresses():
     """Reads and replies the list of public crdb ip addresses in
     the remote crdb cluster"""
     ip_addresses = []
-    inventory = subprocess.check_output(["../ansible/gce.py", "--pretty"])
-    for line in inventory.splitlines():
-        if not re.search("gce_public_ip", line):
-            continue
-        match = re.search('\d+\.\d+\.\d+\.\d+',line)
-        ip_addresses.append(match.group())
+    inventory = json.loads(subprocess.check_output(["../ansible/gce.py", "--pretty"]))
+    nodes = inventory["tag_cockroachdb-cluster-node"]
+    ip_addresses = []
+    for node in nodes:
+        ip_addresses.append(inventory["_meta"]["hostvars"][node]["gce_public_ip"])
     return ip_addresses
 
 
 ip_addresses = cluster_ip_addresses()
-print("cluster ip addresses: {}",ip_addresses)
+print("cluster ip addresses: {}".format(ip_addresses))
 
 reader = Reader()
 reader.setup(ip_addresses)
