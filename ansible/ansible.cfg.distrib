@@ -15,3 +15,11 @@ host_key_checking = false
 # the inventory script. Use the gce inventory script provided
 # in this directory
 inventory = ./gce.py
+
+# the path to the vault password file
+#
+# This file consist of one line only: the password to decrypt 
+# secret variable values in the ansible .yml files. See
+# for instance roles/control-node/default/main.yml, which includes
+# the encrypted docker hub password.
+vault_password_file=./crdb-cluster-vault.passwd
