@@ -49,7 +49,8 @@ CREATE TABLE IF NOT EXISTS osm.way_tags (
     value STRING NOT NULL,
     PRIMARY KEY (way_id, id),
     CONSTRAINT fk_way_tags FOREIGN KEY (way_id) REFERENCES osm.ways,
-    INDEX key_value_idx (key, value)
+    INDEX key_value_idx (key, value, id),
+    INDEX way_id_idx (way_id, id)
 );
 --) INTERLEAVE IN PARENT ways (way_id);
 
