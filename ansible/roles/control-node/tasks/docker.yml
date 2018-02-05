@@ -1,0 +1,19 @@
+#
+# pull the docker images
+# 
+- name: log into docker hub
+  become: true
+  shell: "docker login --username {{ docker_hub_user }} --password {{ docker_hub_password }}"
+  # doesn't work at the moment, using bare docker command instead
+  # docker_login:
+  #   username: "{{ docker_hub_user }}"
+  #   password: "{{ docker_hub_password }}"
+
+- name: "pull the docker image {{ docker_image }}"
+  become: true
+  shell: "docker pull {{ docker_image }}"
+  # doesn't work at the moment, using bare docker command instead
+  # docker_image:
+  #   name: "{{ docker_image }}"
+  #   state: present
+

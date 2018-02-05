@@ -43,3 +43,8 @@
     - name: install docker
       include_role:
         name: docker
+
+    - name: pull the control node docker image
+      include_role:
+        name: control-node
+        tasks_from: docker
