@@ -8,3 +8,4 @@ keys
 # don't publish, includes private information
 gce.env
 .ssh
+crdb-cluster-vault.passwd
