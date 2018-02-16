@@ -1,3 +1,4 @@
 *.osm.pbf
 csv-files
 *.pyc
+test.py
