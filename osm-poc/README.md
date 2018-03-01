@@ -35,24 +35,6 @@ $ sudo pip install imposm
 $ sudo apt install libtokyocabinet-dev
 ```
 
-# Using a docker container 
-## build the container
-```bash
-# this will build the cocker container with the tag 'gubaer/crdb-cluster-control-node'
-# run this in the root directory of this repository
-$ sudo docker build -t gubaer/crdb-cluster-control-node -f docker/crdb-cluster-control-node.docker .
-```
-
-## run the container 
-```bash
-# launch the container
-$ sudo docker run \
-    -ti \
-    -v $(pwd):/control-node-home \
-    gubaer/crdb-cluster-control-node
-# shell prompt in the container 
-root@dc2fb7dce0e2:/#
-```
 
 # Create or drop the database
 You need the public ip address of one of the cluster nodes:
@@ -100,4 +82,29 @@ $ ssh -i ~/.ssh/kgkacon -L 8080:${NODE_PRIVATE_IP}:8080 kgkacon@${NODE_PUBLIC_IP
 
 # launch a local browser with http://localhost:8080 to access the admin web UI exposed
 # by the cluster node ${NODE_PUBLIC_IP}
+```
+
+# Using a docker container 
+## build the container
+```bash
+# this will build the cocker container with the tag 'gubaer/crdb-cluster-control-node'
+# run this in the root directory of this repository
+$ sudo docker build -t gubaer/crdb-cluster-control-node -f docker/crdb-cluster-control-node.docker .
+```
+
+## run the container 
+```bash
+# launch the container
+$ sudo docker run \
+    -ti \
+    -v $(pwd):/control-node-home \
+    gubaer/crdb-cluster-control-node
+# shell prompt in the container 
+root@dc2fb7dce0e2:/#
+```
+
+# Load the cluster with OSM data
+```bash
+# loads the data from `switzerland-latest.osm.pbf` into the crdb cluster
+$ python import-osm-parallel.py
 ```
