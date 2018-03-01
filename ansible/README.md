@@ -38,7 +38,7 @@ $ source ./gce.env
 ```
 ## create the cluster
 The following playbook will create the disk, the virtual network, and the GCE virtual machines for
-the cluster. All the machines will be prepared to run as cockroachdb node.
+the cluster. Machines will be prepared to run as cockroachdb node.
 
 ```bash
 # start the playbook and enter the number of nodes in the cluster. Should be an even
@@ -75,20 +75,20 @@ built-in [cockroach sql client](https://www.cockroachlabs.com/docs/stable/use-th
 
 The cluster is configured as secure cluster. When you point the local sql client
 to one of the cluster nodes using the command line option `--host <public-ip-address>`, you have 
-to pass in the certs directory where the CA certificate and the user certificates are stored.
+to pass in the `certs` directory where the CA certificate and the user certificates are stored, see command line option `--certs-dir`.
 
 The public ip addresses of the cockroach db nodes are available either
-- in the [instance list](https://console.cloud.google.com/compute/instances)
-  in the GCP console
 
-- in the dynamic ansible repository 
+* in the [instance list](https://console.cloud.google.com/compute/instances) in the GCP console
+
+* in the dynamic ansible repository 
   ```bash
   # look for 'gce_public_ip' in the output of this command
   % ./gce.py --refresh-cache --pretty
   ```
 
 ```bash
-# connect to a cockroacĥ node with the user root ((root is assumed if no other user is 
+# connect to a cockroacĥ node with the user root (root is assumed if no other user is 
 # specified on the command line)
 # in path/to/certs/file cockroach should find
 #  - ca.crt
@@ -99,11 +99,11 @@ The public ip addresses of the cockroach db nodes are available either
     --database=<database-name>
 ```
 
-Or if you want to be explicit about the user:
+Or, with a specific user:
 
 ```bash
-# connect to a cockroack node with the (implicit) user root
-# in path/to/certs/file cockroach should find
+# connect to a cockroack node with the user root.
+# iIn path/to/certs/file cockroach should find
 #  - ca.crt
 #  - client.root.crt
 % cockroach sql \
