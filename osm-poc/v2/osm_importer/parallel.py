@@ -146,6 +146,8 @@ class Feeder(object):
         #
         print("{}/{}: inserting {} relations ...".format(
             self.target_node, self.id, len(relations)))
+        #TODO: catch InternalError: transaction is too large to complete; try splitting into pieces
+        #split into two halfs and retry
         self._insert_data(Feeder.INSERT_TEMPLATE_RELATIONS, make_relation_row, relations)
 
     def _insert_values(self, values):
