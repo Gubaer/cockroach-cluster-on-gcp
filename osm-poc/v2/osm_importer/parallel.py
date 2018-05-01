@@ -257,7 +257,9 @@ class Reader(object):
         for relation_id, tags, members in relations:
             self.relation_cache.append((relation_id, tags, members))
 
-            if self._relation_cache_weight() >= 5000:
+            # 3000: estimated, 5000 results in spurious "transaction too large"
+            # errors
+            if self._relation_cache_weight() >= 3000:
                 self.queue.put(["relations", self.relation_cache])
                 self.relation_cache = []
 
