@@ -67,7 +67,7 @@ The admin web UI is exposed by every node in the cluster, but you have to use a 
 tunnel to access it
 
 ```bash
-# you can find the required IP addresses in the output of
+# lookup the required IP addresses in the output of
 #  gce.py --refresh-cache --pretty
 #
 
@@ -87,7 +87,7 @@ $ ssh -i ~/.ssh/kgkacon -L 8080:${NODE_PRIVATE_IP}:8080 kgkacon@${NODE_PUBLIC_IP
 # Using a docker container 
 ## build the container
 ```bash
-# this will build the cocker container with the tag 'gubaer/crdb-cluster-control-node'
+# this will build the crdb container with the tag 'gubaer/crdb-cluster-control-node'
 # run this in the root directory of this repository
 $ sudo docker build -t gubaer/crdb-cluster-control-node -f docker/crdb-cluster-control-node.docker .
 ```
