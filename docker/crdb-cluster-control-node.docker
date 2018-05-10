@@ -45,7 +45,7 @@ RUN git clone https://github.com/google/protobuf/  \
 
 # install python modules
 RUN    pip install -U pip  \
-    && pip install imposm  \
+    && python -m pip install imposm  \
             psycopg2 \
             apache-libcloud==1.5.0 \
             boto3
@@ -56,6 +56,6 @@ RUN cd /  \
       | tar xvz 
 ENV PATH cockroach-v2.0.1.linux-amd64:$PATH
 
-# the root directory with the ansible and the python scripts; and with the keys and certificates 
+# the root directory with the ansible and the python scripts; and with the keys and certificates
 VOLUME /control-node-home
 
