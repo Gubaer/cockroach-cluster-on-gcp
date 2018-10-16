@@ -1,11 +1,12 @@
 #
 # builds the docker container for the crdb cluster control node. It includes
-# the required software packages
-#  - to create the crdb cluster on the Google Cloud Plattform using ansible
-#  - to create the OSM database in the cluster
-#  - to import an extract of the OSM database using python and psycopg2
+# the required software packages to
+#  - create the crdb cluster on the Google Cloud Plattform using ansible
+#  - create the OSM database in the cluster
+#  - import an extract of the OSM database using python and psycopg2
 #
 # How to build: see README.md in this directory
+#
 FROM ubuntu:18.04
 
 # install ansible
@@ -38,9 +39,9 @@ RUN    pip install -U pip  \
 
 # download and install crdb
 RUN cd /  \
-    &&  wget -qO- https://binaries.cockroachdb.com/cockroach-v2.0.4.linux-amd64.tgz \
+    &&  wget -qO- https://binaries.cockroachdb.com/cockroach-v2.0.6.linux-amd64.tgz \
       | tar xvz 
-ENV PATH /cockroach-v2.0.4.linux-amd64:$PATH
+ENV PATH /cockroach-v2.0.6.linux-amd64:$PATH
 
 # the root directory with the ansible and the python scripts; and with the keys and certificates
 VOLUME /control-node-home
