@@ -39,9 +39,9 @@ RUN    pip install -U pip  \
 
 # download and install crdb
 RUN cd /  \
-    &&  wget -qO- https://binaries.cockroachdb.com/cockroach-v2.0.6.linux-amd64.tgz \
+    &&  wget -qO- https://binaries.cockroachdb.com/cockroach-v2.1.1.linux-amd64.tgz \
       | tar xvz 
-ENV PATH /cockroach-v2.0.6.linux-amd64:$PATH
+ENV PATH /cockroach-v2.1.1.linux-amd64:$PATH
 
 # the root directory with the ansible and the python scripts; and with the keys and certificates
 VOLUME /control-node-home
