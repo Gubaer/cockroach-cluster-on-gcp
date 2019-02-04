@@ -1,7 +1,7 @@
 # the filename and download url of the cockroachdb distribution
 cockroach_distribution:
-  filename: cockroach-v2.1.1.linux-amd64.tgz
-  url: "https://binaries.cockroachdb.com/cockroach-v2.1.1.linux-amd64.tgz"
+  filename: cockroach-v2.1.4.linux-amd64.tgz
+  url: "https://binaries.cockroachdb.com/cockroach-v2.1.4.linux-amd64.tgz"
 
 cockroach_node:
   datadir: /var/data/cockroachdb
